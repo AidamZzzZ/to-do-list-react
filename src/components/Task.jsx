@@ -5,19 +5,36 @@ const HandleInputError = (props) => {
   return <p>{props.message}</p>
 }
 
-const  FormTask = ({ onHandleForm, onInput, inputTask }) => {
+const FormTask = ({ onHandleForm, onInput, inputTask }) => {
   return (
     <>
       <form onSubmit={onHandleForm}>
-        <input 
-          type="text" 
-          placeholder='Input a new task...'
-          onChange={onInput}
-          value={inputTask}  
-        />
+        <label htmlFor="">
+          <input 
+            type="text" 
+            placeholder='Input a new task...'
+            onChange={onInput}
+            value={inputTask}  
+          />
+        </label>
         <button type='submit'>send</button>
       </form>
     </>
+  )
+}
+
+const UpdateTask = ({ inputValue, onConfirm, onInput }) => {
+  return (
+    <li>
+      <label htmlFor="">
+        <input 
+          type="text"
+          value={inputValue}
+          onChange={onInput}
+        />
+      </label>
+      <button type="submit" onClick={onConfirm}>confirm</button>
+    </li>
   )
 }
 
@@ -44,4 +61,4 @@ const TaskItem = (props) => {
   )
 }
 
-export { FormTask, TaskItem, HandleInputError }
+export { FormTask, TaskItem, HandleInputError, UpdateTask }

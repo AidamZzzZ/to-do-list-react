@@ -1,43 +1,49 @@
-import { useState, useEffect } from 'react'
-import { TaskItem, FormTask, HandleInputError } from './components/Task'
+import { useState, useEffect, Fragment } from 'react'
+import { TaskItem, FormTask, HandleInputError, UpdateTask } from './components/Task'
 import taskService from './services/tasks'
 import PrincipalTitle from './components/Titles'
+
 
 const url = "http://localhost:3001/tasks"
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
+  const [updateTask, setUpdateTask] = useState('')
   const [inputTask, setInputTask] = useState('')
   const [tasks, setTasks] = useState(null)
+  const [editId, setEditId] = useState(null)
   
   useEffect(() => {
     taskService
       .getAll(url)
       .then(response => 
         setTasks(response))
-      updateReverseTask()
   }, [])
 
   const handleFormTask = (e) => {
     e.preventDefault()
 
     if (inputTask === "") {
-      console.log("Ingrese una nota...")
-    }
+      setErrorMessage("Input a valid note")
 
-    const newTask = {
-      completed: false,
-      title: inputTask
-    }
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 1000)
+    } else {
+      const newTask = {
+        completed: false,
+        title: inputTask
+      }
 
-    taskService
-      .addTask(url, newTask)
-      .then(response => 
-        setTasks(tasks.concat(response))
-      )
-      .catch(error => console.log(error))
-    setInputTask('')
-    updateReverseTask()
+      taskService
+        .addTask(url, newTask)
+        .then(response => 
+          setTasks(tasks.concat(response))
+        )
+        .catch(error => console.log(error))
+
+      setInputTask('')
+    }
   }
 
   const handleInput = (e) => {
@@ -58,27 +64,43 @@ const App = () => {
 
   const handleDeleteTask = (id) => {
     const task = tasks.find(task => task.id === id)
-    taskService
+    if (window.confirm(`are you sure delete task ${task.title}?`)) {
+      taskService
       .deleteTask(`${url}/${id}`, task)
       .then(response => {
         setTasks(tasks.filter(task => task.id !== response.id))
       })
       .catch(error => console.log(error))
+    }
   }
 
-  const handleUpdateTask = (id) => {
-    const task = tasks.find(task => task.id === id)
-    return <input type="text" value={task.title} />
+  const handleUpdateTask = (id, name) => {
+    setUpdateTask(name)
+    setEditId(id)
   }
+
+  const handleConfirmUpdate = (id) => {
+    const task = tasks.find(task => task.id === id)
+    const newTask = { ...task, title: updateTask }
+
+    if (updateTask === "" ) {
+      setErrorMessage("Enter a valid input for update task")
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2000)
+    } else {
+      taskService
+        .updateTask(`${url}/${id}`, newTask)
+        .then(response => 
+          setTasks(tasks.map(task => task.id === id ? response : task))
+        )
+        .catch(error => console.log(error))
+      setEditId(null)
+    }
+  } 
 
   if (!tasks) {
     return null
-  }
-  
-  const updateReverseTask = () => {
-    const reverseTasks = tasks.reverse()
-
-    return reverseTasks
   }
 
   return (
@@ -90,12 +112,22 @@ const App = () => {
 
       <ul>
         {tasks.map(task => 
-          <TaskItem key={task.id} 
-            taskName={task.title} 
-            completed={task.completed} 
-            onCheckTask={() => handleCheckTask(task.id)}
-            onDeleteTask={() => handleDeleteTask(task.id)}
-            onUpdateTask={() => handleUpdateTask(task.id)}
+          task.id === editId
+          ? 
+            <UpdateTask 
+              key={task.id}
+              inputValue={updateTask} 
+              onInput={(e) => setUpdateTask(e.target.value)} 
+              onConfirm={() => handleConfirmUpdate(task.id)} 
+            />
+          :
+            <TaskItem 
+              key={task.id} 
+              taskName={task.title} 
+              completed={task.completed} 
+              onCheckTask={() => handleCheckTask(task.id)}
+              onDeleteTask={() => handleDeleteTask(task.id)}
+              onUpdateTask={() => handleUpdateTask(task.id, task.title)}
             />
         )}
       </ul>

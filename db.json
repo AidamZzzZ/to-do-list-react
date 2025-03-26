@@ -1,44 +1,14 @@
 {
   "tasks": [
     {
-      "id": "6d78",
-      "completed": false,
-      "title": "tarea 1---1230-1203"
+      "id": "c633",
+      "completed": true,
+      "title": "beibeee"
     },
     {
-      "id": "dbff",
+      "id": "b306",
       "completed": false,
-      "title": "aa"
-    },
-    {
-      "id": "5067",
-      "completed": false,
-      "title": "aaa"
-    },
-    {
-      "id": "2296",
-      "completed": false,
-      "title": "mi cara cuando"
-    },
-    {
-      "id": "c2d4",
-      "completed": false,
-      "title": ""
-    },
-    {
-      "id": "cd48",
-      "completed": false,
-      "title": ""
-    },
-    {
-      "id": "30a0",
-      "completed": false,
-      "title": ""
-    },
-    {
-      "id": "f696",
-      "completed": false,
-      "title": "a"
+      "title": "tarea"
     }
   ]
 }
