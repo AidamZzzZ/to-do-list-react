@@ -1,8 +1,6 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import { TaskItem, FormTask, HandleInputError, UpdateTask } from './components/Task'
 import taskService from './services/tasks'
-import PrincipalTitle from './components/Titles'
-
 
 const url = "http://localhost:3001/tasks"
 
@@ -29,6 +27,7 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 1000)
+
     } else {
       const newTask = {
         completed: false,
@@ -66,11 +65,11 @@ const App = () => {
     const task = tasks.find(task => task.id === id)
     if (window.confirm(`are you sure delete task ${task.title}?`)) {
       taskService
-      .deleteTask(`${url}/${id}`, task)
-      .then(response => {
-        setTasks(tasks.filter(task => task.id !== response.id))
-      })
-      .catch(error => console.log(error))
+        .deleteTask(`${url}/${id}`, task)
+        .then(response => {
+          setTasks(tasks.filter(task => task.id !== response.id))
+        })
+        .catch(error => console.log(error))
     }
   }
 
@@ -105,12 +104,12 @@ const App = () => {
 
   return (
     <>
-      <PrincipalTitle title="Your Tasks"/>
+      <h1 className='text-center font-bold text-4xl m-10'>Your task's</h1>
       <HandleInputError message={errorMessage} />
 
       <FormTask onHandleForm={handleFormTask} onInput={handleInput} inputTask={inputTask}/>
 
-      <ul>
+      <ul className='flex justify-center items-center flex-col m-auto border border-gray-300 w-2/5 rounded-sm shadow-2xl p-5'>
         {tasks.map(task => 
           task.id === editId
           ? 
@@ -122,12 +121,11 @@ const App = () => {
             />
           :
             <TaskItem 
-              key={task.id} 
-              taskName={task.title} 
-              completed={task.completed} 
-              onCheckTask={() => handleCheckTask(task.id)}
-              onDeleteTask={() => handleDeleteTask(task.id)}
-              onUpdateTask={() => handleUpdateTask(task.id, task.title)}
+              key={task.id}
+              task={task} 
+              onCheckTask={handleCheckTask}
+              onClickHandleUpdate={handleUpdateTask}
+              onClickHandleDelete={handleDeleteTask}
             />
         )}
       </ul>
